@@ -67,6 +67,7 @@ public class PersonServiceImpl implements PersonService {
 //
 //        Object forObject = session.query(Object.class, cypher, new HashMap<>());
 
+        // spring data neo4j对于path的支持并不好用，也许是我用的方式不对?
         Iterable<Map<String, Object>> itrt = personRepository.findPath();
         System.out.println(itrt);
 
