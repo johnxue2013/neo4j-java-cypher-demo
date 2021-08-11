@@ -3,13 +3,10 @@ package com.example.demo.controller;
 import com.example.demo.entity.LoveRelation;
 import com.example.demo.entity.PersonNode;
 import com.example.demo.service.PersonService;
-import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * @author han.xue
@@ -37,18 +34,5 @@ public class PersonController {
         love.setStartNode(person1);
         love.setEndNode(person2);
         return personService.loves(love);
-    }
-
-
-    @RequestMapping("/findAllById/{id}")
-    List<LoveRelation> findAllById(@PathVariable("id") Long id) {
-        return personService.findAllById(id);
-    }
-
-    @RequestMapping("/path")
-    Result path() {
-        Result result = personService.searchPath();
-        System.out.println(result);
-        return result;
     }
 }
