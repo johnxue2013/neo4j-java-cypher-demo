@@ -24,6 +24,11 @@ import java.util.List;
 @RequestMapping("/person")
 public class PersonController {
 
+    // A driver maintains a connection pool for each remote Neo4j server. Therefore
+    // the most efficient way to make use of a Driver is to use the same instance
+    // across the application.
+    private static Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "root"));
+
     @Autowired
     private PersonService personService;
 
@@ -60,13 +65,15 @@ public class PersonController {
     @RequestMapping("/path2/{startNodeName}/{endNodeName}")
     String path2(@PathVariable("startNodeName") String startNodeName, @PathVariable("endNodeName") String endNodeName) {
 
-        Driver driver = GraphDatabase.driver("bolt://localhost:7687", AuthTokens.basic("neo4j", "root"));
+
 
         try (Session session = driver.session()) {
 
-            String cypher = "MATCH (p1:Node {name:'%s'}),(p2:Node{name:'%s'}),p=shortestpath((p1)-[*]->(p2)) RETURN p";
+            String cypher = "MATCH (p1:Node {name:'%s'}),(p2:Node{name:'%s'}),p=allshortestpaths((p1)-[*]->(p2)) RETURN p";
 
             String cql = String.format(cypher, startNodeName, endNodeName);
+
+            System.out.println(cql);
 
             //result包含了所有的path
             StatementResult result = session.run(cql);
@@ -107,6 +114,8 @@ public class PersonController {
 
                     }
                 }
+
+                System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             }
 
             return "success";
