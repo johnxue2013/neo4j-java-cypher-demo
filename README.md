@@ -27,6 +27,7 @@ docker run --name neo4j -d \
 
 ### 插入示例数据
 
+在Neo4J WebUI的控制台中,执行下方语句
 ```sql
 // 创建节点
 CREATE (a:Node{name: '北京'});
