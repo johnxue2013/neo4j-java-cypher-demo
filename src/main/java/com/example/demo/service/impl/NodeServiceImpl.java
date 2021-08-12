@@ -8,7 +8,9 @@ import org.neo4j.driver.v1.types.Relationship;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author han.xue
@@ -23,11 +25,15 @@ public class NodeServiceImpl implements NodeService {
 
     @Override
     public void findAllShortestPathByName(String startNodeName, String endNodeName) {
+        String cypher = "MATCH (p1:Node {name:'%s'}),(p2:Node{name:'%s'}),p=allshortestpaths((p1)-[*]->(p2)) RETURN p";
+
+        String cql = String.format(cypher, startNodeName, endNodeName);
+
+        findPath(cql);
+    }
+
+    private void findPath(String cql) {
         try (Session session = driver.session()) {
-
-            String cypher = "MATCH (p1:Node {name:'%s'}),(p2:Node{name:'%s'}),p=allshortestpaths((p1)-[*]->(p2)) RETURN p";
-
-            String cql = String.format(cypher, startNodeName, endNodeName);
 
             System.out.println("将要执行的cql为:" + cql);
 
@@ -38,25 +44,40 @@ public class NodeServiceImpl implements NodeService {
                 Record record = result.next();
                 List<Value> value = record.values();
 
+                StringBuffer line = null;
                 for (Value i : value) {
 
+                    line = new StringBuffer();
+
                     Path path = i.asPath();
+
+                    Map<Long, Node> nodeCache = new HashMap<>();
 
                     //得到path中的所有节点
                     for (Node node : path.nodes()) {
                         System.out.printf("id=%s; node: %s,", node.id(), node.asMap());
                         System.out.println();
+
+                        nodeCache.put(node.id(), node);
                     }
 
                     //处理路径中的关系
                     for (Relationship relationship : path.relationships()) {
 
                         long startNodeId = relationship.startNodeId();
+                        Node startNode = nodeCache.get(startNodeId);
+
                         long endNodeId = relationship.endNodeId();
+                        Node endNode = nodeCache.get(endNodeId);
+
                         String relType = relationship.type();
 
-                        System.out.printf("关系类型：%s, startNodeId: %s, toNodeId: %s", relType, startNodeId, endNodeId);
+                        System.out.printf("关系类型：%s, startNodeId: %s, startNodeName=%s, endNodeId: %s, endNodeName=%s"
+                                , relType, startNodeId, startNode.asMap().get("name"), endNodeId,
+                                endNode.asMap().get("name"));
                         System.out.println();
+
+                        line.append(startNode.asMap().get("name")).append("-").append(endNode.asMap().get("name")).append("-");
 
                         if (relationship.keys().iterator().hasNext()) {
                             System.out.println("关系属性如下：");
@@ -69,12 +90,21 @@ public class NodeServiceImpl implements NodeService {
                             }
                         }
 
-                    }
-                    // 一个路径结束
-                }
+                    }// 一个关系结束
 
-                System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                }// 一个路径结束
+
+                System.out.println("+++++++++++++++++++++++++++++" + line.toString() + "++++++++++++++++++++++++++++++++++++");
             }
         }
+    }
+
+    @Override
+    public void findAllPathByName(String startNodeName, String endNodeName) {
+        String cypher = "MATCH (p1:Node {name:'%s'}),(p2:Node{name:'%s'}),p=(p1)-[*]->(p2) RETURN p";
+
+        String cql = String.format(cypher, startNodeName, endNodeName);
+
+        findPath(cql);
     }
 }

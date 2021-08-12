@@ -31,4 +31,19 @@ public class NodeController {
 
         return "success";
     }
+
+    /**
+     * 查找两个点之间的所有最短路径(最短路径可能存在多个)
+     * @param startNodeName 起始点
+     * @param endNodeName 终点
+     * @return
+     */
+    @RequestMapping("/findAllPathByName/{startNodeName}/{endNodeName}")
+    String findAllPathByName(@PathVariable("startNodeName") String startNodeName,
+                                     @PathVariable("endNodeName") String endNodeName) {
+
+        nodeService.findAllPathByName(startNodeName, endNodeName);
+
+        return "success";
+    }
 }

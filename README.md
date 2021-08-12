@@ -35,6 +35,7 @@ CREATE (a:Node{name: '上海'});
 CREATE (a:Node{name: '苏州'});
 CREATE (a:Node{name: '南京'});
 CREATE (a:Node{name: '杭州'});
+create (:Node{name:'徐州'}), (:Node{name:'淮安'}), (:Node{name:'宿迁'});
 
 // 创建一个约束
 CREATE CONSTRAINT ON (a:Node) ASSERT a.name IS UNIQUE;
@@ -47,6 +48,11 @@ MATCH (a:Node{name:'苏州'}), (b:Node{name:'南京'}) MERGE (a)-[r:`G26`]->(b) 
 MATCH (a:Node{name:'上海'}), (b:Node{name:'北京'}) MERGE (a)-[r:`G1231`]->(b) RETURN a, b;
 MATCH (a:Node{name:'苏州'}), (b:Node{name:'上海'}) MERGE (a)-[r:`G1231`]->(b) RETURN a, b;
 MATCH (a:Node{name:'南京'}), (b:Node{name:'杭州'}) MERGE (a)-[r:`G26`]->(b) RETURN a, b;
+MATCH (a:Node{name:'北京'}), (b:Node{name:'徐州'}) MERGE (a)-[r:`G2620`]->(b) RETURN a, b;
+MATCH (a:Node{name:'徐州'}), (b:Node{name:'淮安'}) MERGE (a)-[r:`G2620`]->(b) RETURN a, b;
+MATCH (a:Node{name:'淮安'}), (b:Node{name:'宿迁'}) MERGE (a)-[r:`G2620`]->(b) RETURN a, b;
+MATCH (a:Node{name:'宿迁'}), (b:Node{name:'南京'}) MERGE (a)-[r:`G2620`]->(b) RETURN a, b;
+MATCH (a:Node{name:'南京'}), (b:Node{name:'杭州'}) MERGE (a)-[r:`G2620`]->(b) RETURN a, b;
 ```
 ### 运行本项目
 直接运行com.example.demo.DemoApplication.main方法，之后访问Controller中的接口即可看到效果
