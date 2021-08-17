@@ -2,9 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.service.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author han.xue
@@ -24,7 +24,7 @@ public class NodeController {
      * @return
      */
     @RequestMapping("/findAllShortestPathByName/{startNodeName}/{endNodeName}")
-    String findAllShortestPathByName(@PathVariable("startNodeName") String startNodeName,
+    public String findAllShortestPathByName(@PathVariable("startNodeName") String startNodeName,
                                      @PathVariable("endNodeName") String endNodeName) {
 
         nodeService.findAllShortestPathByName(startNodeName, endNodeName);
@@ -43,6 +43,29 @@ public class NodeController {
                                      @PathVariable("endNodeName") String endNodeName) {
 
         nodeService.findAllPathByName(startNodeName, endNodeName);
+
+        return "success";
+    }
+
+
+    /**
+     * 带有事务的执行cypher语句
+     * @param nodeNames 节点名称
+     */
+    @RequestMapping(value = "/actionWithTransaction", method = RequestMethod.POST)
+    public String actionWithTransaction(@RequestBody List<String> nodeNames) {
+        nodeService.actionWithTransaction(nodeNames);
+
+        return "success";
+    }
+
+    /**
+     * 没有事务的执行cypher语句
+     * @param nodeNames 节点名称
+     */
+    @RequestMapping(value = "/actionWithoutTransaction", method = RequestMethod.POST)
+    public String actionWithoutTransaction(@RequestBody List<String> nodeNames) {
+        nodeService.actionWithoutTransaction(nodeNames);
 
         return "success";
     }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletionStage;
 
 /**
  * @author han.xue
@@ -94,7 +95,8 @@ public class NodeServiceImpl implements NodeService {
 
                 }// 一个路径结束
 
-                System.out.println("+++++++++++++++++++++++++++++" + line.toString() + "++++++++++++++++++++++++++++++++++++");
+                System.out.println("+++++++++++++++++++++++++++++" + line.toString() +
+                        "++++++++++++++++++++++++++++++++++++");
             }
         }
     }
@@ -106,5 +108,40 @@ public class NodeServiceImpl implements NodeService {
         String cql = String.format(cypher, startNodeName, endNodeName);
 
         findPath(cql);
+    }
+
+    @Override
+    public void actionWithTransaction(List<String> nodeNames) {
+        try (Session session = driver.session()) {
+            Transaction tx = session.beginTransaction();
+
+            for (int i = 0; i < nodeNames.size(); i++) {
+
+                if (i == 2) {
+                    throw new RuntimeException("some bad thing happened, no data will be created");
+                }
+
+                // 类似sql中的preparedStatement，这种语句会被neo4j缓存，可以提高执行效率，也可以防止cql注入的风险，
+                // 具体可以看run方法的注释
+                tx.run("create (n:Node{name: {nodeName}})", Values.parameters("nodeName", nodeNames.get(i)));
+            }
+
+            // 提交事务
+            tx.commitAsync();
+        }
+    }
+
+    @Override
+    public void actionWithoutTransaction(List<String> nodeNames) {
+        try (Session session = driver.session()) {
+
+            for (int i = 0; i < nodeNames.size(); i++) {
+                if (i == 2) {
+                    throw new RuntimeException("although some bad thing happened, previous data will still be created");
+                }
+
+                session.run("create (n:Node{name: {nodeName}})", Values.parameters("nodeName", nodeNames.get(i)));
+            }
+        }
     }
 }
