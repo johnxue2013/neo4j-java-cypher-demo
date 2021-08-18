@@ -118,7 +118,7 @@ public class NodeServiceImpl implements NodeService {
             for (int i = 0; i < nodeNames.size(); i++) {
 
                 if (i == 2) {
-                    throw new RuntimeException("some bad thing happened, no data will be created");
+                    throw new RuntimeException("exception happened, no data will be created");
                 }
 
                 // 类似sql中的preparedStatement，这种语句会被neo4j缓存，可以提高执行效率，也可以防止cql注入的风险，
@@ -137,7 +137,7 @@ public class NodeServiceImpl implements NodeService {
 
             for (int i = 0; i < nodeNames.size(); i++) {
                 if (i == 2) {
-                    throw new RuntimeException("although some bad thing happened, previous data will still be created");
+                    throw new RuntimeException("although exception happened, previous data will still be created");
                 }
 
                 session.run("create (n:Node{name: {nodeName}})", Values.parameters("nodeName", nodeNames.get(i)));
