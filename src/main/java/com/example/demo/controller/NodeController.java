@@ -33,7 +33,7 @@ public class NodeController {
     }
 
     /**
-     * 查找两个点之间的所有最短路径(最短路径可能存在多个)
+     * 查找两个点之间的所有路径
      * @param startNodeName 起始点
      * @param endNodeName 终点
      * @return
