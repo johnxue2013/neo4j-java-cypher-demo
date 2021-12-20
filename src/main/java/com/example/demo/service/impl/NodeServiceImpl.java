@@ -103,7 +103,11 @@ public class NodeServiceImpl implements NodeService {
 
     @Override
     public void findAllPathByName(String startNodeName, String endNodeName) {
+        // 不限制路径长度
         String cypher = "MATCH (p1:Node {name:'%s'}),(p2:Node{name:'%s'}),p=(p1)-[*]->(p2) RETURN p";
+
+        // 限制路径长度为最大4个路径
+//        String cypher = "MATCH (p1:Node {name:'%s'}),(p2:Node{name:'%s'}),p=(p1)-[*..4]->(p2) RETURN p";
 
         String cql = String.format(cypher, startNodeName, endNodeName);
 
