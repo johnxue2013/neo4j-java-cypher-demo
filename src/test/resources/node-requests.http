@@ -1,0 +1,5 @@
+### 查询最短路径
+GET http://localhost:8080/node/findAllShortestPathByName/杭州/徐州
+
+### 查询所有可达路径
+GET http://localhost:8080/node/findAllPathByName/杭州/徐州
