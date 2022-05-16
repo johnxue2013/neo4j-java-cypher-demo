@@ -98,6 +98,8 @@ public class NodeServiceImpl implements NodeService {
                 System.out.println("+++++++++++++++++++++++++++++" + line.toString() +
                         "++++++++++++++++++++++++++++++++++++");
             }
+
+            System.out.println("运行结束");
         }
     }
 
